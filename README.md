@@ -3,20 +3,19 @@
 ![24 saatte İstanbul'un nabzı](ciktilar/grafikler/nabiz_24saat_2023.gif)
 
 İBB'nin saatlik toplu ulaşım verisiyle İstanbul'un günlük ritmi.
-**2022 – Temmuz 2024, 31 ay, ~475 milyon satır**; DuckDB + SQL window
-functions + Python.
+2022 başından 2024 Temmuz'una kadar tüm yolculuk kayıtları DuckDB ve
+Python ile işlendi.
 
 ## Öne çıkan bulgular
 
-- Şehrin kontağı 05:00'te çevriliyor: yolcu sayısı bir saatte **19 katına** çıkıyor.
-- Hafta içi çift zirve (08 ve 18), hafta sonu 13:00 sonrası tek plato.
-- **Gecenin başkenti Beyoğlu** (gece payı ‰52). İkinci sıradaki Arnavutköy'ün sırrı eğlence değil, M11 havalimanı metrosu.
-- Metro açılışları veriden okunuyor: Arnavutköy gece ligine 2023'te girdi (M11), Beşiktaş ‰23'ten ‰36'ya çıktı (M7 uzantısı).
-- 2023'ün anomalileri: 6 Şubat depremi, seçimler, bayram arifeleri, 18 Kasım lodosu. En pozitif gün: **Cumhuriyet'in 100. yılı** (z=+3.1).
-- **"Emekli saati" gerçek:** ücretsiz kart (65+) sabah zirvesine katılmıyor, 10:00–16:00 arası kendi platosunu yaşıyor.
-- **Ramazan geceyi %45–65 canlandırıyor** (iftar sonrası); sahurda artış yok — sahur evde geçiyor.
-- Pazartesi sendromu veride yok. Gece 00:00'ın en kalabalık günü **Pazar** — Cumartesi gecesinin taşması.
-- 313 raylı istasyon 4 ritim tipine ayrılıyor: sabah zirveli "yatak odası" duraklar, akşam zirveli iş merkezleri, karma ve dengeli tipler.
+- Şehir sabah 5'te ilk seferlerle bir anda uyanıyor; hafta içi sabah ve akşam olmak üzere iki kez zirve yapıyor, hafta sonu öğleden sonra tek bir platoya oturuyor.
+- Gecenin başkenti Beyoğlu. İkinci sıradaki Arnavutköy'ün sırrı eğlence değil, havalimanı metrosunun gece uçuş yolcuları.
+- Metro açılışları veriden okunuyor: havalimanı hattı açılınca Arnavutköy gece ligine girdi, M7 uzantısı açılınca Beşiktaş'ın gece payı sıçradı.
+- Şehri durduran günler veride tek tek görünüyor: 6 Şubat depremi, kar fırtınaları, seçim günleri, bayram arifeleri, lodos. Şehri sokağa döken en büyük gün ise Cumhuriyet'in 100. yılı.
+- "Emekli saati" gerçek: ücretsiz kart sahipleri sabah koşuşturmasına katılmıyor, öğle saatlerinde kendi ritmini yaşıyor. Öğrenci kartlarının profili yaz tatilinde bambaşka bir şekle bürünüyor.
+- Ramazan geceleri şehir belirgin biçimde canlanıyor; sahur saatlerinde ise hareket yok — sahur evde geçiyor.
+- Pazartesi sendromu veride yok: hafta içi günler birbirinin kopyası. Gece yarısının en kalabalık anı ise Pazar'a devreden Cumartesi gecesi.
+- Raylı sistem istasyonları birkaç karakteristik ritim tipine ayrılıyor: sabah yoğun "yatak odası" duraklar, akşam yoğun iş merkezleri ve karma bölgeler.
 
 ## Grafikler
 
@@ -24,31 +23,30 @@ functions + Python.
 *İstanbul kaçta uyanıyor, kaçta yatıyor?*
 
 ![Anomaliler](ciktilar/grafikler/2023/fig_04_anomali.png)
-*Hangi günler "normal" değildi? (z-skoru, aynı haftanın gününe göre)*
+*Hangi günler "normal" değildi?*
 
 ![Gece endeksi](ciktilar/grafikler/2023/fig_05_gece_ilceler.png)
-*İlçelerin gece yolcu payı (raylı sistem)*
+*İlçelerin gece yolcu payı*
 
 ![Yıllar arası gece endeksi](ciktilar/grafikler/karsilastirma/k3_gece_endeksi.png)
 *Üç yılda gece hayatı — metro açılışlarının izi*
 
 ![Kart tipleri](ciktilar/grafikler/ozel/fig_07_kart_tipi.png)
-*Kim hangi saatte yolda? Öğrenci, tam, ücretsiz*
+*Kim hangi saatte yolda?*
 
 ![Ramazan](ciktilar/grafikler/ozel/fig_08_ramazan.png)
 *Ramazan'ın saatlik imzası*
 
-İnteraktif: `ciktilar/haritalar/gece_haritasi_2023.html` (ilçe choropleth) ve
-`ciktilar/haritalar/ilce_saatlik_nabiz_2023.html` (saat kaydıraçlı) — indirip
-tarayıcıda açın. Tüm yılların grafikleri `ciktilar/grafikler/` altında.
+İnteraktif haritalar `ciktilar/haritalar/` altında (indirip tarayıcıda açın).
+Tüm yılların grafikleri `ciktilar/grafikler/` altında.
 
 ## Veri
 
 - Kaynak: [İBB Açık Veri — Saatlik Toplu Ulaşım Veri Seti](https://data.ibb.gov.tr/dataset/hourly-public-transport-data-set)
-- Veri repoda yok (`data/` gitignore'da): aylık CSV'leri portaldan indirip
+- Veri repoda yok: aylık CSV'leri portaldan indirip
   `veri/ham/hourly_transportation_YYYYMM.csv` adıyla koyun.
-- Portaldaki bazı dosyalar eksik (ör. Ağustos 2024 sonrası) — her dosya
-  önce doğrulanır. Kolonlar ve tuzaklar: [`veri/VERI_SOZLUGU.md`](veri/VERI_SOZLUGU.md)
+- Portaldaki bazı dosyalar eksik olabiliyor; her dosya kullanılmadan önce
+  doğrulanır. Kolonların anlamı: [`veri/VERI_SOZLUGU.md`](veri/VERI_SOZLUGU.md)
 
 ## Çalıştırma
 
@@ -68,16 +66,10 @@ python scriptler/make_gif.py 2023                 # animasyonlu harita
 ## Yapı
 
 ```
-├── defterler/   # veri keşfi (otopsi)
-├── sql/         # numaralı DuckDB sorguları (window functions)
+├── defterler/   # veri keşfi
+├── sql/         # DuckDB sorguları
 ├── kaynak/         # ingest, db, viz
-├── scriptler/     # validate, grafik/harita üreticileri
-├── data/        # raw + processed (gitignore) + lookup tabloları
-└── ciktilar/     # PNG, GIF, HTML
+├── scriptler/     # doğrulama ve grafik/harita üreticileri
+├── data/        # ham + işlenmiş veri (repoda değil) ve lookup tabloları
+└── ciktilar/     # grafikler ve haritalar
 ```
-
-## Teknik notlar
-
-- Ham CSV'ler pandas'a hiç yüklenmedi; filtre/aggregate DuckDB'de (19 GB → 1 GB Parquet).
-- Window functions: `ROW_NUMBER`, `LAG`, hareketli ortalama, `AVG() OVER ()`, `FILTER`, `QUALIFY`.
-- `town` kolonu otobüste garaj bölgesi gösterdiği için ilçe analizleri raylı sistemle sınırlı; M7'nin eksik ilçeleri `veri/esleme/` ile tamamlandı.
