@@ -14,25 +14,31 @@ from pathlib import Path
 import duckdb
 
 PROJE_KOKU = Path(__file__).resolve().parent.parent
-PARQUET_GLOB = str(PROJE_KOKU / "veri" / "islenmis" / "hourly_2023*.parquet")
-
-# Tek noktadan yönetilen view tanımı: SQL dosyaları da bu view'ı kullanır
-YOLCULUK_VIEW = f"""
-CREATE OR REPLACE VIEW yolculuk AS
-SELECT
-    *,
-    MONTH(transition_date)                          AS ay,
-    ISODOW(transition_date)                         AS haftanin_gunu,  -- 1=Pzt..7=Paz
-    CASE WHEN ISODOW(transition_date) <= 5
-         THEN 'hafta içi' ELSE 'hafta sonu' END     AS gun_tipi
-FROM '{PARQUET_GLOB}'
-"""
+PROCESSED = PROJE_KOKU / "veri" / "islenmis"
 
 
-def baglan(db_path: str | None = None) -> duckdb.DuckDBPyConnection:
+def yolculuk_view(yil: int | None = None) -> str:
+    """`yolculuk` view tanımı. yil verilirse o yılın Parquet'leri,
+    verilmezse tüm yıllar (yıllar arası karşılaştırma için)."""
+    desen = f"hourly_{yil}*.parquet" if yil else "hourly_*.parquet"
+    return f"""
+    CREATE OR REPLACE VIEW yolculuk AS
+    SELECT
+        *,
+        YEAR(transition_date)                           AS yil,
+        MONTH(transition_date)                          AS ay,
+        ISODOW(transition_date)                         AS haftanin_gunu,  -- 1=Pzt..7=Paz
+        CASE WHEN ISODOW(transition_date) <= 5
+             THEN 'hafta içi' ELSE 'hafta sonu' END     AS gun_tipi
+    FROM '{PROCESSED / desen}'
+    """
+
+
+def baglan(yil: int | None = None,
+           db_path: str | None = None) -> duckdb.DuckDBPyConnection:
     """`yolculuk` view'ı hazır bir DuckDB bağlantısı döndürür."""
     con = duckdb.connect(db_path) if db_path else duckdb.connect()
-    con.sql(YOLCULUK_VIEW)
+    con.sql(yolculuk_view(yil))
     return con
 
 

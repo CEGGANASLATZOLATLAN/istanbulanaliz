@@ -17,7 +17,6 @@ import seaborn as sns
 PROJE_KOKU = Path(__file__).resolve().parent.parent
 FIGURES = PROJE_KOKU / "ciktilar" / "grafikler"
 MAPS = PROJE_KOKU / "ciktilar" / "haritalar"
-KAYNAK_NOTU = "Kaynak: İBB Açık Veri (Saatlik Toplu Ulaşım Veri Seti, 2023)"
 
 RENKLER = {
     "hafta içi": "#1f6f8b",
@@ -35,11 +34,15 @@ def stil() -> None:
     plt.rcParams["figure.constrained_layout.use"] = False
 
 
-def kaydet(fig, ad: str) -> None:
-    """Kaynak notunu basıp ciktilar/grafikler/<ad>.png olarak kaydeder."""
-    fig.text(0.99, -0.01, KAYNAK_NOTU, ha="right", va="top",
-             fontsize=8, color="gray")
-    yol = FIGURES / f"{ad}.png"
+def kaydet(fig, ad: str, yil: int | None = None) -> None:
+    """Kaynak notunu basıp ciktilar/grafikler/[<yil>/]<ad>.png olarak kaydeder."""
+    donem = f", {yil}" if yil else ""
+    fig.text(0.99, -0.01,
+             f"Kaynak: İBB Açık Veri (Saatlik Toplu Ulaşım Veri Seti{donem})",
+             ha="right", va="top", fontsize=8, color="gray")
+    klasor = FIGURES / str(yil) if yil else FIGURES
+    klasor.mkdir(parents=True, exist_ok=True)
+    yol = klasor / f"{ad}.png"
     fig.savefig(yol, dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"kaydedildi: {yol.relative_to(PROJE_KOKU)}")

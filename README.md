@@ -13,7 +13,7 @@ gece yaşadığı ve hangi günlerin "normal" olmadığı gerçek veriyle göste
 
 ### İstanbul hafta içi iki kez patlar, hafta sonu tek tepelidir
 
-![Saatlik nabız](ciktilar/grafikler/fig_01_saatlik_nabiz.png)
+![Saatlik nabız](ciktilar/grafikler/2023/fig_01_saatlik_nabiz.png)
 
 Hafta içi 07-08 (sabah zirvesi ~630 bin yolcu/saat) ve 17-18 (akşam zirvesi
 ~660 bin) olmak üzere iki tepe var; akşam zirvesi sabahtan daha yüksek.
@@ -21,11 +21,11 @@ Hafta sonu ise şehir yavaş uyanıyor ve 13:00'ten sonra platoya oturuyor.
 Şehrin kontağı 05:00'te çevriliyor: 04→05 arası yolcu **19 katına** çıkıyor
 (ilk seferler), 05→06 arası **7 kat daha** (`sql/03_saatlik_degisim.sql`, `LAG`).
 
-![Isı haritası](ciktilar/grafikler/fig_02_isi_haritasi.png)
+![Isı haritası](ciktilar/grafikler/2023/fig_02_isi_haritasi.png)
 
 ### 2023'ün anomalileri: deprem, seçim, bayramlar, lodos ve 100. yıl
 
-![Anomaliler](ciktilar/grafikler/fig_04_anomali.png)
+![Anomaliler](ciktilar/grafikler/2023/fig_04_anomali.png)
 
 Her gün, aynı haftanın günü popülasyonuyla karşılaştırıldı (z-skoru).
 Öne çıkanlar:
@@ -38,11 +38,11 @@ Her gün, aynı haftanın günü popülasyonuyla karşılaştırıldı (z-skoru)
   kutlamalar şehri sokağa döktü
 - Seçim günleri (14 ve 28 Mayıs) belirgin negatif
 
-![Yıllık seyir](ciktilar/grafikler/fig_03_yillik_seyir.png)
+![Yıllık seyir](ciktilar/grafikler/2023/fig_03_yillik_seyir.png)
 
 ### Gecenin başkenti Beyoğlu, sürprizi Arnavutköy
 
-![Gece endeksi](ciktilar/grafikler/fig_05_gece_ilceler.png)
+![Gece endeksi](ciktilar/grafikler/2023/fig_05_gece_ilceler.png)
 
 Raylı sistem istasyonlarında gece (23:00–05:00) yolcu payı: **Beyoğlu ‰52**
 ile açık ara önde — Taksim/İstiklal gece ekonomisinin veriye yansıması.
@@ -53,7 +53,7 @@ zirvesi **Nisan (‰26.5)** — Ramazan gecelerinin etkisi
 
 ### İstasyonlar 4 ritim tipine ayrılıyor
 
-![İstasyon kümeleri](ciktilar/grafikler/fig_06_istasyon_kumeleri.png)
+![İstasyon kümeleri](ciktilar/grafikler/2023/fig_06_istasyon_kumeleri.png)
 
 313 raylı istasyonun hafta içi saatlik profili k-means ile kümelendi:
 **sabah zirveliler** (yatak odası mahalleler: sabah evden çıkılan yer),
@@ -63,7 +63,7 @@ Bir istasyonun grafiği, çevresinin ne işe yaradığını söylüyor.
 
 ### İnteraktif: ilçe ilçe saatlik nabız
 
-`ciktilar/haritalar/ilce_saatlik_nabiz.html` — saat kaydıracıyla 15 büyük ilçenin
+`ciktilar/haritalar/ilce_saatlik_nabiz_2023.html` — saat kaydıracıyla 15 büyük ilçenin
 raylı sistem yoğunluğunu izleyebilirsiniz (plotly, tarayıcıda açın).
 
 ## Veri
@@ -85,12 +85,29 @@ pip install -r requirements.txt
 # 1) İndirilen her CSV'yi doğrula (eksik gün/saat, şema kayması)
 python scriptler/validate_csv.py veri/ham/hourly_transportation_2023*.csv
 
-# 2) CSV → Parquet (ZSTD, ~%95 küçülme)
+# 2) CSV → Parquet (ZSTD, ~%95 küçülme; eksik/bozuk aylar otomatik reddedilir)
 python kaynak/ingest.py
 
-# 3) Tüm grafikleri üret
-python scriptler/make_figures.py
+# 3) Bir yılın tüm grafiklerini üret → ciktilar/grafikler/<yıl>/
+python scriptler/make_figures.py 2023
 ```
+
+### Başka bir yılı işlemek
+
+Pipeline yıl-parametriktir: o yılın aylık CSV'lerini indirip aynı üç adımı
+çalıştırmak yeterli. Portal durumu (Temmuz 2026 itibarıyla):
+
+| Yıl | Durum |
+|-----|-------|
+| 2022 | 12 ay sağlam görünüyor → tam yıl ✅ |
+| 2023 | 12 ay doğrulandı ✅ (bu repodaki analiz) |
+| 2024 | Ocak–Temmuz sağlam; Ağustos+ bozuk → kısmi yıl |
+| 2021 | Ekim dosyası bozuk → 11 ay |
+| 2020 | Pandemi yılı; dosyalar küçük ama muhtemelen gerçek (şehir durmuştu). `ingest`/`validate` eşiğini `--esik` ile düşürmek gerekebilir |
+
+Yeni yıl işlerken o yılın özel günlerini `scriptler/make_figures.py` içindeki
+`OZEL_GUNLER` sözlüğüne ekleyin — anomali grafiği etiketlerini oradan alır
+(eksikse tarih yazar, grafik yine üretilir).
 
 ## Repo yapısı
 
