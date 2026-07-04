@@ -1,4 +1,4 @@
-# İstanbul Analiz — Şehir Saat Kaçta Nerede Yaşıyor?
+# İstanbul Analiz 
 
 ![24 saatte İstanbul'un nabzı](ciktilar/grafikler/nabiz_24saat_2023.gif)
 
